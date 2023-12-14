@@ -30,4 +30,4 @@ class FilterMergeGlueJob(BaseGlueJob):
 
 if __name__ == "__main__":
     job = FilterMergeGlueJob()
-    job.execute_job()
+    job.execute()

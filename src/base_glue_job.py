@@ -29,7 +29,7 @@ class BaseGlueJob:
     def write_data(self, data: Union[RDD, DataFrame, DynamicFrame]) -> None:
         raise NotImplementedError
     
-    def execute_job(self) -> None:
+    def execute(self) -> None:
         self.glue_job.init(self.job_args['JOB_NAME'], self.job_args)
         data = self.load_data()
         data = self.process_data(data)
