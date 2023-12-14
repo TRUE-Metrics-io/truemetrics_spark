@@ -3,7 +3,6 @@ from typing import Union
 
 from awsglue.dynamicframe import DynamicFrame
 from pyspark import RDD
-
 from pyspark.sql import DataFrame
 
 GlueJobDataObjectType = Union[RDD, DataFrame, DynamicFrame]
