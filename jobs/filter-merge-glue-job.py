@@ -29,14 +29,14 @@ def run_job():
     print(transformed_df.collect())
 
 
-if __name__ == "__main__":
-    args = getResolvedOptions(sys.argv, ['JOB_NAME'])
-    sc = SparkContext(appName="testing-testing")
-    glueContext = GlueContext(sc)
-    spark = glueContext.spark_session
-    job = Job(glueContext)
-    job.init(args['JOB_NAME'], args)
+# if __name__ == "__main__":
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext(appName="testing-testing")
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
 
-    run_job()
+run_job()
 
-    job.commit()
+job.commit()
