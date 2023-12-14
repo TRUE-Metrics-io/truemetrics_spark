@@ -1,5 +1,5 @@
-SCRIPT_FILE_NAME="filter-merge-glue-job.py"
-WORKSPACE_LOCATION="./jobs"
+SCRIPT_FILE_NAME="filter_merge_glue_job.py"
+WORKSPACE_LOCATION="./src"
 docker run -it \
     -v ~/.aws:/home/glue_user/.aws \
     -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ \
@@ -10,4 +10,4 @@ docker run -it \
     -p 4040:4040 \
     -p 18080:18080 \
     --name glue_spark_submit amazon/aws-glue-libs:glue_libs_4.0.0_image_01 \
-    spark-submit /home/glue_user/workspace/$SCRIPT_FILE_NAME --JOB_NAME filter-merge-glue-job
+    spark-submit /home/glue_user/workspace/$SCRIPT_FILE_NAME --JOB_NAME filter_merge_glue_job

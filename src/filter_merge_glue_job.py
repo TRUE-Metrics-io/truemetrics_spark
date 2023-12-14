@@ -2,7 +2,7 @@ from typing import Union
 from pyspark import RDD
 
 from pyspark.sql import DataFrame
-from BaseGlueJob import BaseGlueJob
+from base_glue_job import BaseGlueJob
 
 from awsglue.dynamicframe import DynamicFrame
 
