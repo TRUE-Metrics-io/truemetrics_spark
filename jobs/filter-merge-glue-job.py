@@ -15,18 +15,37 @@ from awsglue.dynamicframe import DynamicFrame
 
 
 def run_job():
-    data = [("John", 25), ("Alice", 30), ("Bob", 22)]
-    columns = ["Name", "Age"]
-    df = spark.createDataFrame(data, columns)
-
-    # Show the original DataFrame
-    print(df.collect())
-
-    # Perform a simple transformation (selecting only the "Name" column)
-    transformed_df = df.select(col("Name"))
-
-    # Show the transformed DataFrame
-    print(transformed_df.collect())
+    true_v2_input_dyf = (
+        glueContext
+        .create_sample_dynamic_frame_from_catalog(
+            database='true-schema-input-v2',
+            table_name='true_v2_input',
+            num=10,
+        )
+        # .create_dynamic_frame_from_options(
+        #     connection_type="s3",
+        #     connection_options={
+        #         "paths": [
+        #             # "s3://true-v2-input/data/",
+        #             "s3://true-v2-input-subset-for-testing-filter-merge-glue-job",
+        #             # "s3://true-v2-input/data/2023/09/10/17/",
+        #             # "s3://true-v2-input/data/2023/11/10/15/",
+        #             # "s3://true-v2-input/data/2023/11/13/11/",
+        #             # "s3://true-v2-input/data/2023/11/15/10/",
+        #             # "s3://true-v2-input/data/2023/11/30/11/",
+        #             # "s3://true-v2-input/data/2023/11/30/19/",
+        #         ],
+        #         "recurse": True,
+        #     },
+        #     format="json",
+        #     format_options={
+        #         "attachFilename": "input_file_name",
+        #     },
+        # )
+        # .map(add_has_invalid_schema_column)
+    )
+    
+    true_v2_input_dyf.printSchema()
 
 
 # if __name__ == "__main__":
