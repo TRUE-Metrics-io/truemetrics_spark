@@ -23,6 +23,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             connection_type="s3",
             connection_options={
                 "paths": [
+                    # "s3://true-v2-input/data/"
                     "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-only-double-dtype-values/",
                     "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
