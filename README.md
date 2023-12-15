@@ -28,7 +28,9 @@ Then copy-paste the contents of this file into terminal and run.
 
 ## Contributing
 ### Adding a New Glue Job
-Want to add a new Glue Job? Add a new file to `truemetrics_spark/src/<job-name>_glue_job.py` that implements a class called `<JobName>GlueJob(BaseGlueJob)` (i.e. the new Glue job should inherit the base glue job class).
+Want to add a new Glue Job? Follow these steps:
+1. Add a new file to `truemetrics_spark/src/<job-name>_glue_job.py` that implements a class called `<JobName>GlueJob(BaseGlueJob)` (i.e. the new Glue job should inherit the base glue job class).
+2. Implement the functions `<JobName>GlueJob.load_data()`, `<JobName>GlueJob.process_data()`, `<JobName>GlueJob.write_data()`, and the `BaseGlueJob` takes care of the rest.
 
 ## Pre-Commit
 To enforce code quality, this repo uses pre-commit hooks. In particular, [`ruff`](https://github.com/astral-sh/ruff) is used as a code formatter/linter by way of [the `ruff` pre-commit hook](https://github.com/astral-sh/ruff-pre-commit).
