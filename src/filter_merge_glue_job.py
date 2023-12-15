@@ -2,7 +2,6 @@ from pyspark.sql.functions import (
     explode,
     arrays_zip,
     col,
-    expr,
     first,
     from_unixtime,
     year,
@@ -85,14 +84,14 @@ class FilterMergeGlueJob(BaseGlueJob):
             .withColumn("sensor_readings", col("data.values"))
             .withColumn("sensor_reading_timestamps", col("data.t_utc"))
             .drop("data")
-            # DEBUG: Reduce lengths of data.values and data.t_utc to just 3 elements so as to process less data.
-            .withColumn(
-                "sensor_readings", expr("slice(sensor_readings, 1, 4)")
-            )  # col("data.values"))
-            .withColumn(
-                "sensor_reading_timestamps",
-                expr("slice(sensor_reading_timestamps, 1, 4)"),
-            )  # col("data.t_utc"))
+            # # DEBUG: Reduce lengths of data.values and data.t_utc to just 3 elements so as to process less data.
+            # .withColumn(
+            #     "sensor_readings", expr("slice(sensor_readings, 1, 4)")
+            # )
+            # .withColumn(
+            #     "sensor_reading_timestamps",
+            #     expr("slice(sensor_reading_timestamps, 1, 4)"),
+            # )
             # Zip the sensor_reading_timestamps array with the sensor_readings array and explode it so that one row of the dataframe corresponds to one sensor-reading timestamp.
             .withColumn(
                 "tmp", arrays_zip("sensor_reading_timestamps", "sensor_readings")
