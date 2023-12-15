@@ -1,7 +1,6 @@
 SCRIPT_FILE_NAME="filter_merge_glue_job.py"
 WORKSPACE_LOCATION="./src"
 docker run -it \
-    -v ~/.aws:/home/glue_user/.aws \
     -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ \
     -e AWS_REGION=$AWS_GLUE__REGION \
     -e AWS_ACCESS_KEY_ID=$AWS_GLUE__ACCESS_KEY_ID \
