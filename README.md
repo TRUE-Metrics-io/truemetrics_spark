@@ -41,4 +41,5 @@ To use this, please take the following steps to set up `pre-commit` locally:
 ## References
 Helpful links go here:
 - https://stackoverflow.com/questions/75455266/how-to-pass-job-parameters-to-aws-glue-libs-docker-container
+- https://tedspence.com/using-aws-single-sign-on-within-your-docker-containers-eb95d0cc377a
 - https://stackoverflow.com/questions/61217834/how-to-use-extra-files-for-aws-glue-job
