@@ -2,10 +2,12 @@
 All code for truemetrics AWS Glue jobs.
 
 ## Running a Glue Job Locally
+If you want the AWS Glue IAM credentials, ask @benfeifke.
+
+### MacOS
 Update `docker-run-local.sh` according to your needs:
 ```bash
 #### truemetrics_spark/docker-run-local.sh ####
-SCRIPT_FILE_NAME="filter_merge_glue_job.py"  # Your script name here.
 WORKSPACE_LOCATION="./src"
 JOB_NAME="filter_merge_glue_job"  # The Job Name here.
 docker run -it \
@@ -17,12 +19,15 @@ docker run -it \
     -p 4040:4040 \
     -p 18080:18080 \
     --name glue_spark_submit amazon/aws-glue-libs:glue_libs_4.0.0_image_01 \
-    spark-submit /home/glue_user/workspace/$SCRIPT_FILE_NAME --JOB_NAME $JOB_NAME
+    spark-submit /home/glue_user/workspace/$JOB_NAME.py --JOB_NAME $JOB_NAME
 ```
+Then copy-paste the contents of this file into terminal and run.
 
-If you want the AWS Glue IAM credentials, ask @benfeifke.
+### Windows
+...
 
-## Adding a New Glue Job
+## Contributing
+### Adding a New Glue Job
 Want to add a new Glue Job? Add a new file to `truemetrics_spark/src/<job-name>_glue_job.py` that implements a class called `<JobName>GlueJob(BaseGlueJob)` (i.e. the new Glue job should inherit the base glue job class).
 
 ## Pre-Commit
