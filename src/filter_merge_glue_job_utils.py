@@ -107,11 +107,12 @@ def has_invalid_schema(dynamic_record) -> str:
             return "id_api_key bad dtype"
         if not isinstance(dynamic_record["body"]["metadata"]["id_phone"], str):
             return "id_phone bad dtype"
-        if not isinstance(dynamic_record["body"]["metadata"]["version_sw"], str):
-            return "version_sw bad dtype"
 
         # Not all metadata fields were present in all versions of the SDK;
         # when they are present, its datatype must be checked; when they are present, the file can pass.
+        if "version_sw" in dynamic_record["body"]["metadata"]:
+            if not isinstance(dynamic_record["body"]["metadata"]["version_sw"], str):
+                return "version_sw bad dtype"
         if "type_device" in dynamic_record["body"]["metadata"]:
             if not isinstance(dynamic_record["body"]["metadata"]["type_device"], str):
                 return "type_device bad dtype"
@@ -177,7 +178,7 @@ def has_invalid_schema(dynamic_record) -> str:
 
         return ""
     except (KeyError, TypeError, ValueError, NameError) as e:
-        return e
+        return f"{e}"
 
 
 def add_has_invalid_schema_column(dynamic_record):

@@ -10,9 +10,8 @@ from pyspark.sql.functions import (
     dayofmonth,
     hour,
 )
+
 from base_glue_job import BaseGlueJob
-
-
 import filter_merge_glue_job_utils
 
 
@@ -25,8 +24,10 @@ class FilterMergeGlueJob(BaseGlueJob):
             connection_type="s3",
             connection_options={
                 "paths": [
-                    # "s3://true-v2-input/data/2023/11/30/22/",
-                    "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/"
+                    "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
+                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-only-double-dtype-values/",
+                    "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
+                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-string-dtype-names/",
                 ],
                 "recurse": True,
             },
