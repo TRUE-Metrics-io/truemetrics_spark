@@ -1,5 +1,7 @@
+from functools import cached_property
 import sys
 from typing import Union
+import datetime as dt
 
 from pyspark import RDD
 from pyspark.context import SparkContext
@@ -20,6 +22,10 @@ class BaseGlueJob:
         self.sc = SparkContext(appName=self.app_name)
         self.glueContext = GlueContext(self.sc)
         self.glue_job = Job(self.glueContext)
+
+    @cached_property
+    def run_timestamp(self) -> str:
+        return str(int(dt.datetime.utcnow().timestamp()))
 
     def load_data(self) -> Union[RDD, DataFrame, DynamicFrame]:
         raise NotImplementedError
