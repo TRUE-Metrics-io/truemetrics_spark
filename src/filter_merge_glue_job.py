@@ -8,6 +8,7 @@ from pyspark.sql.functions import (
     month,
     dayofmonth,
     hour,
+    lit,
 )
 from awsglue.dynamicframe import DynamicFrame
 
@@ -27,10 +28,11 @@ class FilterMergeGlueJob(BaseGlueJob):
             connection_type="s3",
             connection_options={
                 "paths": [
-                    # "s3://true-v2-input/data/"
-                    "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
+                    "s3://true-v2-input/data",
+                    # "s3://true-v2-input/data/2023/11/22/20",
+                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-only-double-dtype-values/",
-                    "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
+                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-string-dtype-names/",
                 ],
                 "recurse": True,
@@ -41,7 +43,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             },
         ).filter(
             lambda x: (x["id_api_key"] == TEST_ID_API_KEY)
-            and (x["id_phone"] == TEST_ID_PHONE)
+            and (x["body"]["metadata"]["id_phone"] == TEST_ID_PHONE)
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
@@ -168,6 +170,8 @@ class FilterMergeGlueJob(BaseGlueJob):
             .withColumn("day", dayofmonth(col("timestamp")))
             .withColumn("hour", hour(col("timestamp")))
             .drop("timestamp")
+            # Add a column to indicate the creation timestamp of the row.
+            .withColumn("row_created_at_timestamp_utc", lit(self.run_timestamp))
         )
 
         self.report_t_utc_null_percentage(result_data)
@@ -186,7 +190,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             frame=processed_data,
             connection_type="s3",
             connection_options={
-                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_filter_merge_glue_job_result_data/",
+                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data_id_api_key_id_phone_filter/",
                 "partitionKeys": ["year", "month", "day", "hour"],
             },
             format="parquet",
