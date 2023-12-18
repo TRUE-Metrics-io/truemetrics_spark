@@ -30,6 +30,7 @@ class FilterMergeGlueJob(BaseGlueJob):
                 "paths": [
                     "s3://true-v2-input/data",
                     # "s3://true-v2-input/data/2023/11/22/20",
+                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-truncated-for-easy-visual-validation/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-only-double-dtype-values/",
                     # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
@@ -171,7 +172,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             .withColumn("hour", hour(col("timestamp")))
             .drop("timestamp")
             # Add a column to indicate the creation timestamp of the row.
-            .withColumn("row_created_at_timestamp_utc", lit(self.run_timestamp))
+            .withColumn("row_processed_timestamp_utc", lit(self.run_timestamp))
         )
 
         self.report_t_utc_null_percentage(result_data)
