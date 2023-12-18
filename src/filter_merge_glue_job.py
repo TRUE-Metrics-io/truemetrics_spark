@@ -152,7 +152,7 @@ class FilterMergeGlueJob(BaseGlueJob):
                     if sensor_name in valid_data_sensor_reading_timestamp_level.columns
                 }
             )
-            # Revert the column name from `sensor_reading_timestamp` back to `t_utc`, and extract from struct if necessary.
+            # Revert the column name from `sensor_reading_timestamp` to `t_utc`, and extract from struct if necessary.
             .withColumnRenamed("sensor_reading_timestamp", "t_utc")
             .withColumn(
                 "t_utc",
