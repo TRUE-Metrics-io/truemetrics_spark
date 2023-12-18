@@ -9,16 +9,20 @@ from pyspark.sql.functions import (
     dayofmonth,
     hour,
 )
+from awsglue.dynamicframe import DynamicFrame
 
 from base_glue_job import BaseGlueJob
 import filter_merge_glue_job_utils
+import base_utils
 
 
 class FilterMergeGlueJob(BaseGlueJob):
     app_name = "filter-merge-glue-job"
 
-    def load_data(self) -> filter_merge_glue_job_utils.GlueJobDataObjectType:
+    def load_data(self) -> base_utils.GlueJobDataObjectType:
         print("Loading data...")
+        TEST_ID_API_KEY = "bz4k1nou12"
+        TEST_ID_PHONE = "9aa3f129-5093-498c-8326-ddbafdd246fc"
         data = self.glueContext.create_dynamic_frame_from_options(
             connection_type="s3",
             connection_options={
@@ -35,6 +39,9 @@ class FilterMergeGlueJob(BaseGlueJob):
             format_options={
                 "attachFilename": "input_file_name",
             },
+        ).filter(
+            lambda x: (x["id_api_key"] == TEST_ID_API_KEY)
+            and (x["id_phone"] == TEST_ID_PHONE)
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
@@ -43,9 +50,7 @@ class FilterMergeGlueJob(BaseGlueJob):
         data.printSchema()
         return data
 
-    def process_data(
-        self, data: filter_merge_glue_job_utils.GlueJobDataObjectType
-    ) -> filter_merge_glue_job_utils.GlueJobDataObjectType:
+    def process_data(self, data: base_utils.GlueJobDataObjectType) -> DynamicFrame:
         data_with_has_invalid_schema_column = data.map(
             filter_merge_glue_job_utils.add_has_invalid_schema_column
         )
@@ -215,12 +220,24 @@ class FilterMergeGlueJob(BaseGlueJob):
 
         print("true_v2_good_data_merged_df schema:")
         result_data.printSchema()
-        return result_data
 
-    def write_data(
-        self, data: filter_merge_glue_job_utils.GlueJobDataObjectType
-    ) -> None:
-        data.printSchema()
+        result_data_dyf = DynamicFrame.fromDF(
+            result_data, self.glueContext, "result_data_dyf"
+        )
+        return result_data_dyf
+
+    def write_data(self, processed_data: DynamicFrame) -> None:
+        print("Writing data...")
+        self.glueContext.write_dynamic_frame.from_options(
+            frame=processed_data,
+            connection_type="s3",
+            connection_options={
+                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_filter_merge_glue_job_result_data/",
+                "partitionKeys": ["year", "month", "day", "hour"],
+            },
+            format="parquet",
+        )
+        print("Finished writing data.")
 
 
 if __name__ == "__main__":

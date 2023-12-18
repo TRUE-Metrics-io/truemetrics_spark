@@ -1,11 +1,4 @@
 import math
-from typing import Union
-
-from awsglue.dynamicframe import DynamicFrame
-from pyspark import RDD
-from pyspark.sql import DataFrame
-
-GlueJobDataObjectType = Union[RDD, DataFrame, DynamicFrame]
 
 TARGET_SENSOR_SCHEMA = {
     "acc_x_sen": "double",

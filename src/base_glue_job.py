@@ -1,7 +1,7 @@
 import sys
 from typing import Union
-from pyspark import RDD
 
+from pyspark import RDD
 from pyspark.context import SparkContext
 from pyspark.sql import DataFrame
 
@@ -9,6 +9,7 @@ from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
+import base_utils
 
 
 class BaseGlueJob:
@@ -23,12 +24,10 @@ class BaseGlueJob:
     def load_data(self) -> Union[RDD, DataFrame, DynamicFrame]:
         raise NotImplementedError
 
-    def process_data(
-        self, data: Union[RDD, DataFrame, DynamicFrame]
-    ) -> Union[RDD, DataFrame, DynamicFrame]:
+    def process_data(self, data: base_utils.GlueJobDataObjectType) -> DynamicFrame:
         raise NotImplementedError
 
-    def write_data(self, data: Union[RDD, DataFrame, DynamicFrame]) -> None:
+    def write_data(self, data: DynamicFrame) -> None:
         raise NotImplementedError
 
     def execute(self) -> None:
