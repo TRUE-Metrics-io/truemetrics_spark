@@ -124,51 +124,17 @@ class FilterMergeGlueJob(BaseGlueJob):
             )  # There's one sensor reading per sensor-name/timestamp, so any agg function (first, min, max, random) works here.
         )
 
-        print(
-            "Now that conversion to tabular format is done, check sensor_reading_timestamp dtype before proceeding:"
-        )
-        sensor_reading_timestamp_dtype = (
-            valid_data_sensor_reading_timestamp_level.select(
-                "sensor_reading_timestamp"
-            ).dtypes[0][1]
-        )
         sensor_reading_timestamp_dtype_is_good = (
-            sensor_reading_timestamp_dtype == "double"
+            self.validate_and_report_sensor_reading_timestamp_dtype(
+                valid_data_sensor_reading_timestamp_level
+            )
         )
-        if not sensor_reading_timestamp_dtype_is_good:
-            print(f"Problem with t_utc dtype: {sensor_reading_timestamp_dtype}")
-            print("The problem is in these files:")
-            files_with_bad_t_utc_dtype = (
-                valid_data_sensor_reading_timestamp_level.filter(
-                    col("sensor_reading_timestamp.double").isNull()
-                )
-                .select("input_file_name")
-                .distinct()
-                .collect()
-            )
-            for file_with_bad_t_utc_dtype in files_with_bad_t_utc_dtype:
-                print(file_with_bad_t_utc_dtype)
-        else:
-            print("No problem with t_utc dtype.")
 
-        try:
-            current_schema = dict(valid_data_sensor_reading_timestamp_level.dtypes)
-            sensor_target_schema_conversion_mapping = {
-                field: {
-                    "current_dtype_is_struct": current_schema[field].startswith(
-                        "struct"
-                    ),
-                    "desired_dtype": target_dtype,
-                }
-                for field, target_dtype in filter_merge_glue_job_utils.TARGET_SENSOR_SCHEMA.items()
-                if field in current_schema.keys()
-            }
-            print("sensor_target_schema_conversion_mapping:")
-            print(sensor_target_schema_conversion_mapping)
-        except (KeyError, ValueError, NameError, AttributeError) as e:
-            print(
-                f"Something went wrong with the creation of the schema conversion mapping: {e}"
+        sensor_target_schema_conversion_mapping = (
+            self.get_sensor_target_schema_conversion_mapping(
+                valid_data_sensor_reading_timestamp_level
             )
+        )
 
         result_data = (
             valid_data_sensor_reading_timestamp_level
@@ -238,6 +204,61 @@ class FilterMergeGlueJob(BaseGlueJob):
             format="parquet",
         )
         print("Finished writing data.")
+
+    def get_sensor_target_schema_conversion_mapping(
+        self, valid_data_sensor_reading_timestamp_level
+    ):
+        try:
+            current_schema = dict(valid_data_sensor_reading_timestamp_level.dtypes)
+            sensor_target_schema_conversion_mapping = {
+                field: {
+                    "current_dtype_is_struct": current_schema[field].startswith(
+                        "struct"
+                    ),
+                    "desired_dtype": target_dtype,
+                }
+                for field, target_dtype in filter_merge_glue_job_utils.TARGET_SENSOR_SCHEMA.items()
+                if field in current_schema.keys()
+            }
+            print("sensor_target_schema_conversion_mapping:")
+            print(sensor_target_schema_conversion_mapping)
+        except (KeyError, ValueError, NameError, AttributeError) as e:
+            print(
+                f"Something went wrong with the creation of the schema conversion mapping: {e}"
+            )
+
+        return sensor_target_schema_conversion_mapping
+
+    def validate_and_report_sensor_reading_timestamp_dtype(
+        self, valid_data_sensor_reading_timestamp_level
+    ):
+        print(
+            "Now that conversion to tabular format is done, check sensor_reading_timestamp dtype before proceeding:"
+        )
+        sensor_reading_timestamp_dtype = (
+            valid_data_sensor_reading_timestamp_level.select(
+                "sensor_reading_timestamp"
+            ).dtypes[0][1]
+        )
+        sensor_reading_timestamp_dtype_is_good = (
+            sensor_reading_timestamp_dtype == "double"
+        )
+        if not sensor_reading_timestamp_dtype_is_good:
+            print(f"Problem with t_utc dtype: {sensor_reading_timestamp_dtype}")
+            print("The problem is in these files:")
+            files_with_bad_t_utc_dtype = (
+                valid_data_sensor_reading_timestamp_level.filter(
+                    col("sensor_reading_timestamp.double").isNull()
+                )
+                .select("input_file_name")
+                .distinct()
+                .collect()
+            )
+            for file_with_bad_t_utc_dtype in files_with_bad_t_utc_dtype:
+                print(file_with_bad_t_utc_dtype)
+        else:
+            print("No problem with t_utc dtype.")
+        return sensor_reading_timestamp_dtype_is_good
 
 
 if __name__ == "__main__":
