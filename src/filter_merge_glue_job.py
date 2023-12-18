@@ -172,7 +172,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             .withColumn("hour", hour(col("timestamp")))
             .drop("timestamp")
             # Add a column to indicate the creation timestamp of the row.
-            .withColumn("row_processed_timestamp_utc", lit(self.run_timestamp))
+            .withColumn("row_created_at_timestamp_utc", lit(self.run_timestamp))
         )
 
         self.report_t_utc_null_percentage(result_data)
