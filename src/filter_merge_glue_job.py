@@ -22,19 +22,13 @@ class FilterMergeGlueJob(BaseGlueJob):
 
     def load_data(self) -> base_utils.GlueJobDataObjectType:
         print("Loading data...")
-        TEST_ID_API_KEY = "bz4k1nou12"
-        TEST_ID_PHONE = "9aa3f129-5093-498c-8326-ddbafdd246fc"
+        # TEST_ID_API_KEY = "bz4k1nou12"
+        # TEST_ID_PHONE = "9aa3f129-5093-498c-8326-ddbafdd246fc"
         data = self.glueContext.create_dynamic_frame_from_options(
             connection_type="s3",
             connection_options={
                 "paths": [
                     "s3://true-v2-input/data",
-                    # "s3://true-v2-input/data/2023/11/22/20",
-                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-truncated-for-easy-visual-validation/",
-                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-all-dtypes-values/",
-                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-correct-schema-only-double-dtype-values/",
-                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-long-dtype-t-utc/",
-                    # "s3://truemetrics-spark-test-data/filter-merge-glue-job/true-v2-input-files-incorrect-schema-string-dtype-names/",
                 ],
                 "recurse": True,
             },
@@ -42,9 +36,6 @@ class FilterMergeGlueJob(BaseGlueJob):
             format_options={
                 "attachFilename": "input_file_name",
             },
-        ).filter(
-            lambda x: (x["id_api_key"] == TEST_ID_API_KEY)
-            and (x["body"]["metadata"]["id_phone"] == TEST_ID_PHONE)
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
@@ -68,9 +59,9 @@ class FilterMergeGlueJob(BaseGlueJob):
         data_w_valid_schema = data_with_has_invalid_schema_column.filter(
             lambda x: x["has_invalid_schema"] == ""
         )
-        print(f"Total rows in data with valid schema: {data_w_valid_schema.count()}")
-        print("Schema of data with valid schema:")
-        data_w_valid_schema.printSchema()
+        # print(f"Total rows in data with valid schema: {data_w_valid_schema.count()}")
+        # print("Schema of data with valid schema:")
+        # data_w_valid_schema.printSchema()
 
         valid_data_sensor_reading_timestamp_level = (
             data_w_valid_schema.toDF()
@@ -175,7 +166,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             .withColumn("row_created_at_timestamp_utc", lit(self.run_timestamp))
         )
 
-        self.report_t_utc_null_percentage(result_data)
+        # self.report_t_utc_null_percentage(result_data)
 
         print("true_v2_good_data_merged_df schema:")
         result_data.printSchema()
@@ -191,7 +182,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             frame=processed_data,
             connection_type="s3",
             connection_options={
-                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data_id_api_key_id_phone_filter/",
+                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data/",
                 "partitionKeys": ["year", "month", "day", "hour"],
             },
             format="parquet",
