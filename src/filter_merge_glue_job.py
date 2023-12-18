@@ -170,19 +170,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             .drop("timestamp")
         )
 
-        try:
-            fraction_of_t_utc_values_that_are_null = (
-                result_data.select(
-                    col("t_utc").isNull().cast("float").alias("fraction_nulls")
-                )
-                .agg({"fraction_nulls": "avg"})
-                .collect()[0][0]
-            )
-            print(
-                f"Fraction of t_utc values in final true_v2_good_data_merged_df result that are null: {fraction_of_t_utc_values_that_are_null}"
-            )
-        except (KeyError, ValueError, NameError, AttributeError) as e:
-            print(f"Error measuring share of bad `t_utc` values: {e}.")
+        self.report_t_utc_null_percentage(result_data)
 
         print("true_v2_good_data_merged_df schema:")
         result_data.printSchema()
@@ -204,6 +192,21 @@ class FilterMergeGlueJob(BaseGlueJob):
             format="parquet",
         )
         print("Finished writing data.")
+
+    def report_t_utc_null_percentage(self, result_data):
+        try:
+            fraction_of_t_utc_values_that_are_null = (
+                result_data.select(
+                    col("t_utc").isNull().cast("float").alias("fraction_nulls")
+                )
+                .agg({"fraction_nulls": "avg"})
+                .collect()[0][0]
+            )
+            print(
+                f"Fraction of t_utc values in final true_v2_good_data_merged_df result that are null: {fraction_of_t_utc_values_that_are_null}"
+            )
+        except (KeyError, ValueError, NameError, AttributeError) as e:
+            print(f"Error measuring share of bad `t_utc` values: {e}.")
 
     def get_sensor_target_schema_conversion_mapping(
         self, valid_data_sensor_reading_timestamp_level
