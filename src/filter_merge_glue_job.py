@@ -28,7 +28,8 @@ class FilterMergeGlueJob(BaseGlueJob):
             connection_type="s3",
             connection_options={
                 "paths": [
-                    "s3://true-v2-input/data",
+                    # "s3://true-v2-input/data",
+                    "s3://true-v2-input/data/2023/11/30/22",
                 ],
                 "recurse": True,
             },
@@ -182,7 +183,8 @@ class FilterMergeGlueJob(BaseGlueJob):
             frame=processed_data,
             connection_type="s3",
             connection_options={
-                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data/",
+                "path": "s3://benfeifke-temp-query-results/filter_merge_glue_job_partition_overwrite_test/",
+                # "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data/",
                 "partitionKeys": ["year", "month", "day", "hour"],
             },
             format="parquet",
