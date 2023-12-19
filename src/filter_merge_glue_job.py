@@ -37,6 +37,9 @@ class FilterMergeGlueJob(BaseGlueJob):
             format_options={
                 "attachFilename": "input_file_name",
             },
+            # ).filter(
+            #     lambda x: (x["id_api_key"] == TEST_ID_API_KEY)
+            #     and (x["body"]["metadata"]["id_phone"] == TEST_ID_PHONE)
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
