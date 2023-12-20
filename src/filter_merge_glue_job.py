@@ -22,21 +22,33 @@ class FilterMergeGlueJob(BaseGlueJob):
 
     def load_data(self) -> base_utils.GlueJobDataObjectType:
         print("Loading data...")
-        # TEST_ID_API_KEY = "bz4k1nou12"
-        # TEST_ID_PHONE = "9aa3f129-5093-498c-8326-ddbafdd246fc"
         data = self.glueContext.create_dynamic_frame_from_options(
             connection_type="s3",
             connection_options={
-                "paths": ["s3://true-v2-input/data"],
+                "paths": [
+                    f"s3://true-v2-input/data/2023/08/{day}" for day in range(25, 32)
+                ],
+                # "paths": [f"s3://true-v2-input/data/2023/09/{day}" for day in range(1, 8)],
+                # "paths": [f"s3://true-v2-input/data/2023/09/{day}" for day in range(8, 15)],
+                # "paths": [f"s3://true-v2-input/data/2023/09/{day}" for day in range(15, 22)],
+                # "paths": [f"s3://true-v2-input/data/2023/09/{day}" for day in range(22, 31)],
+                # "paths": [f"s3://true-v2-input/data/2023/10/{day}" for day in range(1, 8)],
+                # "paths": [f"s3://true-v2-input/data/2023/10/{day}" for day in range(8, 15)],
+                # "paths": [f"s3://true-v2-input/data/2023/10/{day}" for day in range(15, 22)],
+                # "paths": [f"s3://true-v2-input/data/2023/10/{day}" for day in range(22, 32)],
+                # "paths": [f"s3://true-v2-input/data/2023/11/{day}" for day in range(1, 8)],
+                # "paths": [f"s3://true-v2-input/data/2023/11/{day}" for day in range(8, 15)],
+                # "paths": [f"s3://true-v2-input/data/2023/11/{day}" for day in range(15, 22)],
+                # "paths": [f"s3://true-v2-input/data/2023/11/{day}" for day in range(22, 31)],
+                # "paths": [f"s3://true-v2-input/data/2023/12/{day}" for day in range(1, 8)],
+                # "paths": [f"s3://true-v2-input/data/2023/12/{day}" for day in range(8, 15)],
+                # "paths": [f"s3://true-v2-input/data/2023/12/{day}" for day in range(15, 22)],
                 "recurse": True,
             },
             format="json",
             format_options={
                 "attachFilename": "input_file_name",
             },
-            # ).filter(
-            #     lambda x: (x["id_api_key"] == TEST_ID_API_KEY)
-            #     and (x["body"]["metadata"]["id_phone"] == TEST_ID_PHONE)
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
@@ -183,8 +195,9 @@ class FilterMergeGlueJob(BaseGlueJob):
             frame=processed_data,
             connection_type="s3",
             connection_options={
-                "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data/",
-                "partitionKeys": ["year", "month", "day", "hour"],
+                # "path": f"s3://benfeifke-temp-query-results/{self.run_timestamp}_test_filter_merge_glue_job_result_data/",
+                "path": "s3://true-v2-merged-optimized/data/",
+                "partitionKeys": ["year", "month", "day"],
             },
             format="parquet",
         )
