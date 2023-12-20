@@ -4,7 +4,7 @@ from typing import Union
 import datetime as dt
 
 from pyspark import RDD
-from pyspark.context import SparkContext
+from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 
 from awsglue.utils import getResolvedOptions
@@ -18,8 +18,12 @@ class BaseGlueJob:
     app_name: str = None
 
     def __init__(self) -> None:
-        self.job_args = getResolvedOptions(sys.argv, ["JOB_NAME"])
-        self.sc = SparkContext(appName=self.app_name)
+        argv = sys.argv
+        if "--JOB_NAME" not in argv:
+            argv += ["--JOB_NAME", "test-job"]
+        self.job_args = getResolvedOptions(argv, ["JOB_NAME"])
+        self.spark = SparkSession.builder.appName(self.app_name).getOrCreate()
+        self.sc = self.spark.sparkContext
         self.glueContext = GlueContext(self.sc)
         self.glue_job = Job(self.glueContext)
 

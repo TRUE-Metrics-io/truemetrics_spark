@@ -1,3 +1,4 @@
+from typing import List
 from pyspark.sql.functions import (
     explode,
     arrays_zip,
@@ -20,17 +21,16 @@ import base_utils
 class FilterMergeGlueJob(BaseGlueJob):
     app_name = "filter-merge-glue-job"
 
-    def load_data(self) -> base_utils.GlueJobDataObjectType:
+    def load_data(
+        self, s3_paths: List[str] = ["s3://true-v2-input/data"]
+    ) -> base_utils.GlueJobDataObjectType:
         print("Loading data...")
         # TEST_ID_API_KEY = "bz4k1nou12"
         # TEST_ID_PHONE = "9aa3f129-5093-498c-8326-ddbafdd246fc"
         data = self.glueContext.create_dynamic_frame_from_options(
             connection_type="s3",
             connection_options={
-                "paths": [
-                    # "s3://true-v2-input/data",
-                    "s3://true-v2-input/data/2023/11/30/22",
-                ],
+                "paths": s3_paths,
                 "recurse": True,
             },
             format="json",
@@ -49,6 +49,7 @@ class FilterMergeGlueJob(BaseGlueJob):
         return data
 
     def process_data(self, data: base_utils.GlueJobDataObjectType) -> DynamicFrame:
+        # data.show()
         data_with_has_invalid_schema_column = data.map(
             filter_merge_glue_job_utils.add_has_invalid_schema_column
         )
@@ -181,6 +182,7 @@ class FilterMergeGlueJob(BaseGlueJob):
         return result_data_dyf
 
     def write_data(self, processed_data: DynamicFrame) -> None:
+        # processed_data.show()
         print("Writing data...")
         self.glueContext.write_dynamic_frame.from_options(
             frame=processed_data,

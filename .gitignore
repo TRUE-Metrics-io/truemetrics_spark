@@ -1,5 +1,6 @@
 .venv
 src/__pycache__
+test/src/__pycache__
 *.zip
 *.DS_Store
 .ruff_cache

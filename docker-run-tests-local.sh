@@ -1,0 +1,12 @@
+docker run -it \
+  -v ./src:/home/glue_user/workspace/src \
+  -v ./test:/home/glue_user/workspace/test \
+  -e AWS_REGION=$AWS_GLUE__REGION \
+  -e AWS_ACCESS_KEY_ID=$AWS_GLUE__ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_GLUE__SECRET_ACCESS_KEY \
+  -e DISABLE_SSL=true \
+  --rm \
+  -p 4040:4040 \
+  -p 18080:18080 \
+  --name glue_pytest amazon/aws-glue-libs:glue_libs_4.0.0_image_01 \
+  -c "python3 -m pytest"

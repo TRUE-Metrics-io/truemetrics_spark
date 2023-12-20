@@ -26,6 +26,11 @@ Then copy-paste the contents of this file into terminal and run.
 ### Windows
 ...
 
+## Running Tests
+
+### MacOS
+Copy-paste the contents of `docker-run-tests-local.sh` into terminal and run.
+
 ## Contributing
 ### Adding a New Glue Job
 Want to add a new Glue Job? Follow these steps:
