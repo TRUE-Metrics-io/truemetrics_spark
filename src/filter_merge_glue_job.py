@@ -49,6 +49,7 @@ class FilterMergeGlueJob(BaseGlueJob):
             format_options={
                 "attachFilename": "input_file_name",
             },
+            transformation_ctx="true-v2-input-data-load",
         )
         print(
             f"Successfully loaded data. {data.count()} total rows in data (i.e. files)."
